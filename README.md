@@ -201,6 +201,3 @@ Proje kapsamında:
 **Akademik danışman:** Doç. Dr. Mehmet Dal
 **Kurum:** Kocaeli Üniversitesi
 
-## Lisans
-
-Bu proje için açık kaynak lisansı henüz belirlenmemiştir.
