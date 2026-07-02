@@ -6,7 +6,7 @@ ESP32-S3 tarafından üretilen 20 kHz PWM sinyali IR2184 gate driver üzerinden 
 
 ## Sistem Mimarisi
 
-![ESP32-S3 Kontrollü Buck Converter Sistem Mimarisi](docs/images/system_architecture.png)
+![ESP32-S3 Kontrollü Buck Converter Sistem Mimarisi](system_architecture.png)
 
 Sistemin temel çalışma akışı:
 
@@ -53,7 +53,7 @@ ESP32-S3;
 
 ## Donanım Kurulumu
 
-![Buck Converter Donanım Kurulumu](docs/images/hardware_setup.jpg)
+![Buck Converter Donanım Kurulumu](hardware_setup.jpg)
 
 ### ESP32-S3 bağlantıları
 
@@ -115,7 +115,7 @@ Akım ölçüm devresindeki komponent doğrulanana kadar ISENSE_OUT hattı ESP32
 
 ## Seri Monitör Çıktısı
 
-![ESP32-S3 Seri Monitör Ölçümü](docs/images/serial_monitor_measurement.png)
+![ESP32-S3 Seri Monitör Ölçümü](serial_monitor_measurement.png)
 
 Çıkış gerilimi aşağıdaki bağıntıyla hesaplanmaktadır:
 
