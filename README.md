@@ -1,55 +1,46 @@
 # ESP32-S3 Kontrollü Buck Converter
 
-ESP32-S3 ile kontrol edilen, 12 V DC giriş gerilimini yaklaşık 5 V seviyesine düşüren senkron buck converter projesidir.
+Bu proje, 12 V DC giriş gerilimini yaklaşık 5 V seviyesine düşüren senkron buck converter devresinin ESP32-S3 ile kontrol edilmesini amaçlamaktadır.
 
-ESP32-S3 tarafından üretilen 20 kHz PWM sinyali IR2184 gate driver üzerinden MOSFET’lere uygulanmaktadır. Çıkış gerilimi kart üzerindeki gerilim ölçüm devresiyle ölçülmekte ve yerel web arayüzü üzerinden canlı olarak izlenebilmektedir.
+ESP32-S3 tarafından üretilen 20 kHz PWM sinyali IR2184 gate driver üzerinden güç MOSFET’lerine uygulanmaktadır. Çıkış gerilimi kart üzerindeki ölçüm devresiyle izlenmekte ve yerel Wi-Fi ağı üzerinden çalışan web arayüzünde gösterilmektedir.
 
 ## Sistem Mimarisi
 
 ![ESP32-S3 Kontrollü Buck Converter Sistem Mimarisi](system_architecture.png)
 
-Sistemin temel çalışma akışı:
+Sistemde ESP32-S3;
 
-```text
-12 V DC giriş
-      ↓
-Senkron buck güç katı
-      ↓
-Yaklaşık 5 V çıkış
-```
-
-ESP32-S3;
-
-* PWM sinyalini üretir,
+* PWM sinyali üretir,
 * VSENSE_OUT değerini ADC ile okur,
 * çıkış gerilimini hesaplar,
 * web sunucusunu çalıştırır,
-* duty cycle kontrolünü gerçekleştirir.
+* kullanıcıdan gelen duty cycle komutlarını uygular.
 
 ## Temel Özellikler
 
-* ESP32-S3 ile 20 kHz PWM üretimi
+* 20 kHz PWM üretimi
+* 10 bit PWM çözünürlüğü
 * Web arayüzünden manuel duty cycle ayarı
 * PWM açma, kapatma ve acil durdurma
 * Canlı VOUT ve VSENSE_OUT ölçümü
 * ADC kalibrasyonu
 * Yazılımsal aşırı gerilim koruması
-* Wi-Fi Access Point üzerinden yerel kontrol
+* ESP32-S3 Wi-Fi Access Point modu
 * Mobil ve masaüstü tarayıcı desteği
 
 ## Sistem Parametreleri
 
-| Parametre             |   Değer |
-| --------------------- | ------: |
-| Giriş gerilimi        | 12 V DC |
-| Gate driver beslemesi | 11.78 V |
-| PWM frekansı          |  20 kHz |
-| PWM çözünürlüğü       |  10 bit |
-| Test duty değeri      |     %42 |
-| Çıkış gerilimi        | 4.987 V |
-| VSENSE_OUT            | 1.557 V |
-| Kalibrasyon katsayısı |   3.175 |
-| Test yükü             |   100 Ω |
+| Parametre              |   Değer |
+| ---------------------- | ------: |
+| Giriş gerilimi         | 12 V DC |
+| Gate driver beslemesi  | 11.78 V |
+| PWM frekansı           |  20 kHz |
+| PWM çözünürlüğü        |  10 bit |
+| Test duty değeri       |     %42 |
+| Ölçülen çıkış gerilimi | 4.987 V |
+| Ölçülen VSENSE_OUT     | 1.557 V |
+| Kalibrasyon katsayısı  |   3.175 |
+| Test yükü              |   100 Ω |
 
 ## Donanım Kurulumu
 
@@ -62,23 +53,21 @@ ESP32-S3;
 | GPIO15   | IN         | 1 kΩ seri direnç üzerinden PWM  |
 | GPIO4    | VSENSE_OUT | 1 kΩ seri direnç üzerinden ADC  |
 | 3V3      | 3V3        | Gerilim ölçüm devresi beslemesi |
-| GND      | GND        | Ortak toprak bağlantısı         |
+| GND      | GND        | Ortak toprak                    |
 
-Mevcut test sürümünde `SD`, `ISENSE_OUT` ve `VS` hatları ESP32-S3’e bağlanmamıştır.
+Mevcut sürümde `SD`, `ISENSE_OUT` ve `VS` hatları ESP32-S3’e bağlanmamıştır.
 
 ## Tespit Edilen Sorunlar ve Çözümler
 
 ### IR2184 VCC bağlantısı
 
-IR2184 gate driver VCC hattının karta düzgün şekilde ulaşmadığı tespit edilmiştir.
+IR2184 gate driver VCC hattının karta ulaşmadığı tespit edilmiştir. VCC pinine jumper bağlantısı yapılarak yaklaşık 11.78 V besleme uygulanmıştır.
 
-Gate driver VCC pinine jumper bağlantısı yapılarak yaklaşık 11.78 V besleme uygulanmıştır. Bu işlem sonrasında MOSFET’ler sürülmüş ve buck converter çıkış vermeye başlamıştır.
+Bu işlem sonrasında MOSFET’ler sürülmüş ve duty cycle değerine bağlı olarak çıkış gerilimi elde edilmiştir.
 
 ### Eksik gerilim ölçüm elemanları
 
-Kart üzerinde R3, R4 ve R6 elemanlarının eksik olduğu görülmüştür.
-
-Gerilim ölçüm katı aşağıdaki değerlerle tamamlanmıştır:
+Kart üzerinde R3, R4 ve R6 elemanlarının eksik olduğu görülmüştür. Gerilim ölçüm katı aşağıdaki değerlerle tamamlanmıştır:
 
 ```text
 R3 = 1 MΩ
@@ -87,7 +76,7 @@ R5 = Boş
 R6 = 0 Ω / lehim köprüsü
 ```
 
-İlk direnç oranında op-amp çıkışı yaklaşık 1.88 V seviyesinde sınırlanmıştır. R3 direnci 1 MΩ olarak değiştirilerek op-amp giriş seviyesi azaltılmış ve gerilim ölçümü kararlı hale getirilmiştir.
+İlk direnç oranında op-amp çıkışı yaklaşık 1.88 V seviyesinde sınırlanmıştır. R3 direnci 1 MΩ olarak değiştirilerek op-amp giriş seviyesi düşürülmüş ve ölçüm sistemi kararlı hale getirilmiştir.
 
 Son ölçüm:
 
@@ -104,7 +93,7 @@ Akım ölçüm devresindeki komponent doğrulanana kadar ISENSE_OUT hattı ESP32
 
 ## Test Sonuçları
 
-100 Ω yük altında elde edilen sonuçlar:
+100 Ω yük altında elde edilen ölçümler:
 
 | Duty cycle | Çıkış gerilimi |
 | ---------: | -------------: |
@@ -129,9 +118,11 @@ Kullanılan kalibrasyon katsayısı:
 const float VSENSE_GAIN = 3.175;
 ```
 
-## Web Arayüzü
+## Web Kontrol Arayüzü
 
-ESP32-S3 kendi Wi-Fi ağını oluşturmaktadır.
+![Buck Converter Web Arayüzü](web_arayuz.png)
+
+ESP32-S3 kendi Wi-Fi ağını oluşturarak harici modem gerektirmeden yerel bir kontrol paneli sunmaktadır.
 
 ```text
 Wi-Fi adı: Buck_Control
@@ -139,19 +130,25 @@ Parola: buck12345
 IP adresi: 192.168.4.1
 ```
 
-Kullanıcı, ESP32-S3 ağına bağlandıktan sonra tarayıcıdan aşağıdaki adrese erişebilir:
+Tarayıcıdan erişim adresi:
 
 ```text
 http://192.168.4.1
 ```
 
-Web arayüzü üzerinden:
+Web arayüzünde aşağıdaki özellikler bulunmaktadır:
 
-* duty cycle ayarlanabilir,
-* PWM açılıp kapatılabilir,
-* acil durdurma uygulanabilir,
-* VOUT ve VSENSE_OUT değerleri izlenebilir,
-* PWM durumu görüntülenebilir.
+* Canlı çıkış gerilimi göstergesi
+* Canlı VSENSE_OUT değeri
+* Duty cycle slider kontrolü
+* Sayısal duty cycle girişi
+* PWM açma ve kapatma
+* Acil durdurma
+* 10 bit PWM register değerinin gösterilmesi
+* Bağlantı ve sistem durum göstergesi
+* 5.60 V aşırı gerilim koruması
+
+Web paneli manuel sabit PWM kontrolü için tasarlanmıştır. Duty cycle değeri kullanıcı tarafından ayarlanmakta ve sistem tarafından otomatik olarak değiştirilmemektedir.
 
 ## Arduino IDE Ayarları
 
@@ -181,12 +178,12 @@ ledcAttachPin(PIN_PWM, PWM_CHANNEL);
 
 Proje kapsamında:
 
-* buck converter güç katı çalıştırılmış,
-* IR2184 VCC bağlantı problemi giderilmiş,
-* eksik gerilim ölçüm elemanları tamamlanmış,
-* op-amp çalışma aralığı iyileştirilmiş,
-* ESP32-S3 ADC ölçümü kalibre edilmiş,
-* yerel web arayüzü geliştirilmiş,
+* Buck converter güç katı çalıştırılmıştır.
+* IR2184 VCC bağlantı problemi giderilmiştir.
+* Eksik gerilim ölçüm elemanları tamamlanmıştır.
+* Op-amp çalışma aralığı iyileştirilmiştir.
+* ESP32-S3 ADC ölçümü kalibre edilmiştir.
+* Yerel web kontrol arayüzü geliştirilmiştir.
 * %42 duty seviyesinde yaklaşık 5 V çıkış elde edilmiştir.
 
 ## Gelecek Geliştirmeler
