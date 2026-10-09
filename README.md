@@ -39,8 +39,10 @@ Sistemde ESP32-S3;
 | Test duty değeri       |     %42 |
 | Ölçülen çıkış gerilimi | 4.987 V |
 | Ölçülen VSENSE_OUT     | 1.557 V |
-| Kalibrasyon katsayısı  |   3.175 |
+| Yazılımdaki kalibrasyon katsayısı | 3.175 |
 | Test yükü              |   100 Ω |
+
+**Ölçüm tutarlılığı:** Tablodaki 4.987 V / 1.557 V çifti yaklaşık 3.203 oranına karşılık gelir. Yazılımdaki 3.175 katsayısı bu çiftle tam örtüşmemektedir. Ölçüm çiftinin hangi kalibrasyon oturumuna ait olduğu yeniden doğrulanmalıdır; mevcut değerler burada ayrı kayıtlar olarak korunmuştur.
 
 ## Donanım Kurulumu
 
@@ -150,6 +152,15 @@ Web arayüzünde aşağıdaki özellikler bulunmaktadır:
 
 Web paneli manuel sabit PWM kontrolü için tasarlanmıştır. Duty cycle değeri kullanıcı tarafından ayarlanmakta ve sistem tarafından otomatik olarak değiştirilmemektedir.
 
+## Yazılımı Yükleme
+
+1. [vsout_sonrevize.ino](vsout_sonrevize.ino) dosyasını aynı adlı sketch klasöründe Arduino IDE ile açın.
+2. ESP32-S3 kartını ve aşağıdaki ayarları seçin. Kullanılan harici bir sensör/web kütüphanesi yoktur; Arduino, WiFi ve WebServer ESP32 çekirdeğiyle gelir.
+3. Mevcut kodu Arduino-ESP32 2.x ortamında derleyin. 3.x çekirdeğinde kaldırılan LEDC işlevleri için uyarlama gerekir.
+4. Yazılımı yükleyin, `Buck_Control` ağına bağlanın ve `http://192.168.4.1` adresini açın.
+
+[Arduino-ESP32 sürüm geçiş bilgisi](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html)
+
 ## Arduino IDE Ayarları
 
 ```text
@@ -196,8 +207,22 @@ Proje kapsamında:
 * Yeni PCB revizyonu
 * Web arayüzüne canlı grafik ve veri kaydı
 
+## Kişisel Katkım
+
+Çalışmayan kartın bağlantılarını inceleyerek gate driver besleme sorununu ve gerilim ölçüm katındaki eksik elemanları tespit ettim. Donanım düzeltmelerini uyguladım, farklı duty değerlerinde ölçüm aldım ve ESP32-S3 üzerinde PWM üretimi, ADC okuma, aşırı gerilim durdurma işlevi ve yerel web arayüzünü geliştirdim.
+
+Bu çalışma kartın arıza analizi, onarımı ve kontrol yazılımının geliştirilmesini kapsar; ilk buck kartının özgün tasarım sahipliği iddiası içermez. Gösterilen test noktaları kapalı çevrim gerilim regülasyonu veya verim testi değildir.
+
+## Depo İçeriği
+
+- [Gömülü yazılım ve web arayüzü](vsout_sonrevize.ino)
+- Sistem mimarisi, laboratuvar kurulumu, seri ölçüm ve web arayüzü görselleri
+
+[Diğer mühendislik projelerim](https://github.com/mertuzun41/Projeler)
+
 ## Akademik Bilgi
 
 **Akademik danışman:** Doç. Dr. Mehmet Dal
 **Kurum:** Kocaeli Üniversitesi
+
 
