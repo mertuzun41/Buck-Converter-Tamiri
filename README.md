@@ -1,3 +1,5 @@
+**Türkçe** | [English](README.en.md)
+
 # ESP32-S3 Kontrollü Buck Converter
 
 Bu proje, 12 V DC giriş gerilimini yaklaşık 5 V seviyesine düşüren senkron buck converter devresinin ESP32-S3 ile kontrol edilmesini amaçlamaktadır.
